@@ -202,6 +202,25 @@ cipPassword.createDialog = function() {
 		.attr("id", "cip-genpw-dialog");
 
 	var $divFloat = cIPJQ("<div>").addClass("cip-genpw-clearfix");
+	var $formPattern = cIPJQ("<form>");
+	var $defaultPatternButton = cIPJQ("<input>")
+		.attr("type", "radio")
+		.attr("name", "pattern-type")
+		.attr("value", "default-pattern")
+		.click(function(e) {
+			alert("hi");
+		});
+	var $customPatternButton = cIPJQ("<input>")
+		.attr("type", "radio")
+		.attr("name", "pattern-type")
+		.attr("value", "custom-pattern")
+		.click(function(e) {
+			alert("hello");
+		});
+	$formPattern.append($defaultPatternButton).append("Default pattern");
+	$formPattern.append($customPatternButton).append(cIPJQ("<span>").text("Custom pattern"));
+	$divFloat.append($formPattern);
+	console.log("added pattern form(?)");
 	var $btnGenerate = cIPJQ("<button>")
 		.text("Generate")
 		.attr("id", "cip-genpw-btn-generate")
