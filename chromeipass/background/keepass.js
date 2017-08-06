@@ -17,7 +17,6 @@ keepass.keyBody = "chromeipass-key";
 keepass.to_s = cryptoHelpers.convertByteArrayToString;
 keepass.to_b = cryptoHelpers.convertStringToByteArray;
 
-
 keepass.addCredentials = function(callback, tab, username, password, url) {
 	keepass.updateCredentials(callback, tab, null, username, password, url);
 }
@@ -143,7 +142,7 @@ keepass.retrieveCredentials = function (callback, tab, url, submiturl, forceCall
 	callback(entries);
 }
 
-keepass.generatePassword = function (callback, tab, forceCallback) {
+keepass.generatePassword = function (callback, tab, password_type, password_pattern, forceCallback) {
 	// is browser associated to keepass?
 	if(!keepass.testAssociation(tab)) {
 		browserAction.showDefault(null, tab);
@@ -152,15 +151,20 @@ keepass.generatePassword = function (callback, tab, forceCallback) {
 		}
 		return;
 	}
-
+	//TODO UNDO
 	if(keepass.currentKeePassHttp.versionParsed < 1400) {
-		callback([]);
-		return;
+		//callback([]);
+		//return;
 	}
+
+	var bg = chrome.extension.getBackgroundPage();
+	//var use_custom_pattern = bg.document.getElementById("custom-pattern").checked;
 
 	// build request
 	var request = {
-		RequestType: "generate-password"
+		RequestType: "generate-password",
+		PasswordPattern: password_pattern,
+		PasswordType: password_type
 	};
 	var verifier = keepass.setVerifier(request);
 	var id = verifier[0];

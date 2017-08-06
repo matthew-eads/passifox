@@ -207,20 +207,51 @@ cipPassword.createDialog = function() {
 		.attr("type", "radio")
 		.attr("name", "pattern-type")
 		.attr("value", "default-pattern")
+		.attr("id", "default-pattern")
+		.attr("checked", "checked")
 		.click(function(e) {
-			alert("hi");
+			var field = document.getElementById("cip-genpw-textfield-password-pattern");
+			var div = document.getElementById("password-pattern-div");
+			div.hidden = true;
+			field.classList.remove("cip-genpw-textfield");
 		});
 	var $customPatternButton = cIPJQ("<input>")
 		.attr("type", "radio")
 		.attr("name", "pattern-type")
 		.attr("value", "custom-pattern")
+		.attr("id", "custom-pattern")
+		.css("margin-left", "10px")
 		.click(function(e) {
-			alert("hello");
+			var field = document.getElementById("cip-genpw-textfield-password-pattern");
+			var div = document.getElementById("password-pattern-div");
+			div.hidden = false;
+			field.classList.add("cip-genpw-textfield");
 		});
 	$formPattern.append($defaultPatternButton).append("Default pattern");
 	$formPattern.append($customPatternButton).append(cIPJQ("<span>").text("Custom pattern"));
 	$divFloat.append($formPattern);
-	console.log("added pattern form(?)");
+
+	var $passwordPatternDiv = cIPJQ("<div>")
+		.attr("id", "password-pattern-div")
+		.css("padding-top", "10px")
+		.css("padding-bottom", "10px");
+
+	var $textfieldPasswordPattern = cIPJQ("<input>")
+		.attr("id", "cip-genpw-textfield-password-pattern")
+		.attr("type", "text")
+		.attr("placeholder", "Custom password pattern")
+	$passwordPatternDiv.append($textfieldPasswordPattern);
+	var $patternHelp = cIPJQ("<a>")
+		.attr("href", "http://keepass.info/help/base/pwgenerator.html#pattern")
+		.text("Help")
+		.css("float", "right")
+		.css("padding-right", "10px")
+		.css("text-decoration", "underline")
+		.css("color", "blue")
+		.attr("id", "password-pattern-help");
+	$passwordPatternDiv.append($patternHelp);
+	$divFloat.append($passwordPatternDiv);
+
 	var $btnGenerate = cIPJQ("<button>")
 		.text("Generate")
 		.attr("id", "cip-genpw-btn-generate")
@@ -230,8 +261,15 @@ cipPassword.createDialog = function() {
 		.css("float", "left")
 		.click(function(e) {
 			e.preventDefault();
+			var passtype = 0;
+			var passpattern = "";
+			if (document.getElementById("custom-pattern").checked) {
+				passtype = 1;
+				passpattern = cIPJQ("input#cip-genpw-textfield-password-pattern").val();
+			}
 			chrome.extension.sendMessage({
-				action: "generate_password"
+				action: "generate_password",
+				args: [passtype, passpattern]
 			}, cipPassword.callbackGeneratedPassword);
 		});
 	$divFloat.append($btnGenerate);
@@ -400,7 +438,7 @@ cipPassword.createIcon = function(field) {
 		cIPJQ("input#cip-genpw-checkbox-next-field:first")
 			.attr("checked", $bool)
 			.attr("disabled", !$bool);
-
+		document.getElementById("password-pattern-div").hidden = true;
 		$dialog.dialog("open");
 	});
 
